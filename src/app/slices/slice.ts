@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Post, Status, PostSliceState, FetchPostArgs } from "./types";
+
 import axios from "axios";
 
 const initialState: PostSliceState = {
@@ -7,18 +8,18 @@ const initialState: PostSliceState = {
   status: Status.LOADING,
 };
 
-export const FetchPosts = createAsyncThunk<Post[], FetchPostArgs>(
+export const fetchPosts = createAsyncThunk<Post[], FetchPostArgs>(
   "posts/fetchPostsData",
   async (params) => {
-    const { sortBy, search, currentPage, currentUser } = params;
+    const { currentPage } = params;
     const { data } = await axios.get<Post[]>(
-      `https://jsonplaceholder.typicode.com/posts`
+      `https://jsonplaceholder.typicode.com/posts/`
     );
     return data;
   }
 );
 
-const Posts = createSlice({
+const postSlices = createSlice({
   name: "post",
   initialState,
   reducers: {
@@ -28,20 +29,20 @@ const Posts = createSlice({
   },
 
   extraReducers: (builder) => {
-    builder.addCase(FetchPosts.pending, (state) => {
+    builder.addCase(fetchPosts.pending, (state) => {
       state.posts = [];
       state.status = Status.LOADING;
     });
-    builder.addCase(FetchPosts.fulfilled, (state, action) => {
+    builder.addCase(fetchPosts.fulfilled, (state, action) => {
       state.posts = action.payload;
       state.status = Status.SUCCESS;
     });
-    builder.addCase(FetchPosts.rejected, (state) => {
+    builder.addCase(fetchPosts.rejected, (state) => {
       state.posts = [];
       state.status = Status.ERROR;
     });
   },
 });
 
-export const { setItems } = Posts.actions;
-export default Posts.reducer;
+export const { setItems } = postSlices.actions;
+export default postSlices.reducer;

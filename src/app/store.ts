@@ -1,12 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import posts from "./slices/posts";
+import post from "./slices/slice";
 import { useDispatch } from "react-redux";
 
-const store = configureStore({
-  reducer: posts,
+export const store = configureStore({
+  reducer: { post },
 });
 
-// Полная запись
 type FuncType = typeof store.getState;
 export type RootState = ReturnType<FuncType>;
 

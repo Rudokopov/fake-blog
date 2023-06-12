@@ -1,16 +1,12 @@
 export type FetchPostArgs = {
-  sortBy: string;
-  search: string;
   currentPage: number;
-  currentUser: number;
 };
 
 export type Post = {
-  id: string;
+  userId: number;
+  id: number;
   title: string;
-  description: string;
-  imageUrl: string;
-  comments: string[];
+  body: string;
 };
 
 export enum Status {
