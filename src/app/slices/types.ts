@@ -1,7 +1,3 @@
-export type FetchPostArgs = {
-  currentPage: number;
-};
-
 export type Post = {
   userId: number;
   id: number;
@@ -18,4 +14,5 @@ export enum Status {
 export interface PostSliceState {
   posts: Post[];
   status: Status.LOADING | Status.SUCCESS | Status.ERROR;
+  currentPage: number;
 }

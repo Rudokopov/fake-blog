@@ -1,17 +1,17 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Post, Status, PostSliceState, FetchPostArgs } from "./types";
+import { Post, Status, PostSliceState } from "./types";
 
 import axios from "axios";
 
 const initialState: PostSliceState = {
   posts: [],
   status: Status.LOADING,
+  currentPage: 1,
 };
 
-export const fetchPosts = createAsyncThunk<Post[], FetchPostArgs>(
+export const fetchPosts = createAsyncThunk<Post[]>(
   "posts/fetchPostsData",
   async (params) => {
-    const { currentPage } = params;
     const { data } = await axios.get<Post[]>(
       `https://jsonplaceholder.typicode.com/posts/`
     );
@@ -25,6 +25,9 @@ const postSlices = createSlice({
   reducers: {
     setItems(state, action: PayloadAction<Post[]>) {
       state.posts = action.payload;
+    },
+    setCurrentPage(state, action: PayloadAction<number>) {
+      state.currentPage = action.payload;
     },
   },
 
@@ -44,5 +47,5 @@ const postSlices = createSlice({
   },
 });
 
-export const { setItems } = postSlices.actions;
+export const { setItems, setCurrentPage } = postSlices.actions;
 export default postSlices.reducer;

@@ -1,18 +1,32 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import _ from "lodash";
 import Post from "../components/Post";
-import { fetchPosts } from "../app/slices/slice";
+import { fetchPosts, setCurrentPage } from "../app/slices/slice";
 import { useAppDispatch } from "../app/store";
 import { selectPostData } from "../app/slices/selectors";
 import { useSelector } from "react-redux";
+import { Col, Container, Row } from "react-bootstrap";
+import { Pagination } from "../components/Pagination";
+
+const PAGE_SIZE = 10;
 
 const Main = () => {
   const dispatch = useAppDispatch();
-  const { posts, status } = useSelector(selectPostData);
+  const { posts, status, currentPage } = useSelector(selectPostData);
+
+  const [totalPages, setTotalPages] = useState(0);
+
+  const startIndex = (currentPage - 1) * 10;
+  const endIndex = currentPage * 10;
+
+  console.log(currentPage);
+
+  const onChangePage = (page: number) => {
+    dispatch(setCurrentPage(page));
+  };
 
   const getPosts = async () => {
-    const currentPage: number = 1;
-
-    dispatch(fetchPosts({ currentPage }));
+    dispatch(fetchPosts());
 
     window.scrollTo(0, 0);
   };
@@ -20,27 +34,36 @@ const Main = () => {
   useEffect(() => {
     getPosts();
   }, []);
+
+  useEffect(() => {
+    const paginatedPosts = _.chunk(posts, PAGE_SIZE);
+    setTotalPages(paginatedPosts.length);
+  }, [posts]);
   return (
     <section>
-      <>
-        {posts.map((post, i) => {
-          return (
-            <Post
-              key={i}
-              title={post.title}
-              description={post.body}
-              image="https://images.unsplash.com/photo-1675426513962-1db7e4c707c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHx8&auto=format&fit=crop&w=800&q=60"
-              commentsCount={2}
-            />
-          );
-        })}
-      </>
-      {/* <Post
-        title="Салют"
-        description="Этот пост о чем то для проверки чего то"
-        image="https://images.unsplash.com/photo-1675426513962-1db7e4c707c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHx8&auto=format&fit=crop&w=800&q=60"
-        commentsCount={2}
-      /> */}
+      <Container>
+        <Row xs={1} md={2} className="g-4">
+          {posts.slice(startIndex, endIndex).map((post, i) => {
+            return (
+              <Col key={i} md={6}>
+                <Post
+                  title={post.title}
+                  description={post.body}
+                  image="https://images.unsplash.com/photo-1675426513962-1db7e4c707c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHx8&auto=format&fit=crop&w=800&q=60"
+                  commentsCount={2}
+                />
+              </Col>
+            );
+          })}
+        </Row>
+      </Container>
+      <div className="d-flex flex-column align-items-center mt-4">
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onChangePage={onChangePage}
+        />
+      </div>
     </section>
   );
 };
