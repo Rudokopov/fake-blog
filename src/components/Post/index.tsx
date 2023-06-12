@@ -6,10 +6,11 @@ type PostProps = {
   image: string;
   title: string;
   description: string;
+  commentsCount: number;
 };
 
 const Post: React.FC<PostProps> = (props) => {
-  const { image, title, description } = props;
+  const { image, title, description, commentsCount } = props;
   return (
     <Container className={styles.container}>
       <Row xs={1} md={2} className="g-4">
