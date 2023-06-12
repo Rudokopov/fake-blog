@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import post from "./slices/slice";
+import post from "./slices/post/slice";
 import { useDispatch } from "react-redux";
 
 export const store = configureStore({

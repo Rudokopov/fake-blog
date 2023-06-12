@@ -1,8 +1,13 @@
 import React from "react";
 import styles from "./post.module.scss";
-import { Card, Col, Container, Image, Row } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
+import { fetchComments } from "../../app/slices/post/slice";
+import { useAppDispatch } from "../../app/store";
+import { useSelector } from "react-redux";
+import { selectPostData } from "../../app/slices/post/selectors";
 
 type PostProps = {
+  postId: number;
   image: string;
   title: string;
   description: string;
@@ -10,7 +15,13 @@ type PostProps = {
 };
 
 const Post: React.FC<PostProps> = (props) => {
-  const { image, title, description, commentsCount } = props;
+  const dispatch = useAppDispatch();
+  const { image, title, description, commentsCount, postId } = props;
+
+  const getComments = async (currentPost: number) => {
+    dispatch(fetchComments({ currentPost }));
+  };
+
   return (
     <Card className="h-100 d-flex flex-column">
       <Card.Img className={styles.image} variant="top" src={image} />
@@ -27,7 +38,13 @@ const Post: React.FC<PostProps> = (props) => {
           <span>Нина</span>
         </div>
         <Card.Footer className="mt-auto">
-          <small className="text-muted">{commentsCount} комментария</small>
+          <Button
+            onClick={() => {
+              getComments(postId);
+            }}
+          >
+            <small className="text-muted">{commentsCount} комментария</small>
+          </Button>
         </Card.Footer>
       </Card.Body>
     </Card>

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import _ from "lodash";
 import Post from "../components/Post";
-import { fetchPosts, setCurrentPage } from "../app/slices/slice";
+import { fetchPosts, setCurrentPage } from "../app/slices/post/slice";
 import { useAppDispatch } from "../app/store";
-import { selectPostData } from "../app/slices/selectors";
+import { selectPostData } from "../app/slices/post/selectors";
 import { useSelector } from "react-redux";
 import { Col, Container, Row } from "react-bootstrap";
 import { Pagination } from "../components/Pagination";
@@ -12,17 +12,16 @@ const PAGE_SIZE = 10;
 
 const Main = () => {
   const dispatch = useAppDispatch();
-  const { posts, status, currentPage } = useSelector(selectPostData);
+  const { posts, status, currentPage, comments } = useSelector(selectPostData);
 
   const [totalPages, setTotalPages] = useState(0);
 
   const startIndex = (currentPage - 1) * 10;
   const endIndex = currentPage * 10;
 
-  console.log(currentPage);
-
   const onChangePage = (page: number) => {
     dispatch(setCurrentPage(page));
+    window.scrollTo(0, 0);
   };
 
   const getPosts = async () => {
@@ -51,6 +50,7 @@ const Main = () => {
                   description={post.body}
                   image="https://images.unsplash.com/photo-1675426513962-1db7e4c707c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHx8&auto=format&fit=crop&w=800&q=60"
                   commentsCount={2}
+                  postId={post.id}
                 />
               </Col>
             );
