@@ -1,0 +1,25 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  width: 100%;
+  max-width: 660px;
+  margin-bottom: 20px;
+}
+
+.image {
+  max-width: 660px;
+  width: 100%;
+}
+
+.title {
+  font-size: 30px;
+}
+
+.paragraph {
+  margin: 10px 0 0 0;
+  padding: 0;
+}
