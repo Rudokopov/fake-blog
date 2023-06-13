@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Col, Container, Image, Row } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 import styles from "./aboutUser.module.scss";
 
 import axios from "axios";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { userAvatar } from "../../utils/consts";
 import Post from "../Post";
+import Loaded from "../Loader/Loader";
 
 type UserPosts = {
   title: string;
@@ -14,12 +15,22 @@ type UserPosts = {
 
 const AboutUser: React.FC = () => {
   const navigate = useNavigate();
+  const [customStatus, setCustomStatus] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<{
     name: string;
     username: string;
     email: string;
     phone: number;
   }>();
+
+  const fakeLoading = () => {
+    setCustomStatus(true);
+    const timeout = setTimeout(() => {
+      setCustomStatus(false);
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  };
 
   const [userPosts, setUserPosts] = useState<UserPosts[]>([]);
 
@@ -29,6 +40,7 @@ const AboutUser: React.FC = () => {
   const getUserInfo = () => {
     async function fetchUserById() {
       try {
+        fakeLoading();
         const { data } = await axios.get(
           `https://jsonplaceholder.typicode.com/users/${id}`
         );
@@ -65,32 +77,46 @@ const AboutUser: React.FC = () => {
   }
   return (
     <div className="container">
-      <img src={userAvatar} alt="Картинка пользователя" />
-      <h2>{userInfo.name}</h2>
-      <p>{userInfo.username}</p>
-      <p>{userInfo.email}</p>
-      <h3>{userInfo.phone} ₽</h3>
-      {userPosts &&
-        userPosts.map((item, i) => {
-          return (
-            <Post
-              key={i}
-              title={item.title}
-              description={item.body}
-              postId={currentPostId}
+      {customStatus === true ? (
+        <Loaded />
+      ) : (
+        <>
+          <h1 className={styles.title}>Информация о пользователе</h1>
+          <Card className={styles.card}>
+            <Card.Img
+              className={styles.avatar}
+              variant="top"
+              src={userAvatar}
             />
-          );
-        })}
-      <Link to="/" className="button button--outline button--add go-back-btn">
-        <svg
-          width="8"
-          height="14"
-          viewBox="0 0 8 14"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        ></svg>
-        <span>Вернуться назад</span>
-      </Link>
+            <Card.Body>
+              <Card.Title>Имя: {userInfo.name}</Card.Title>
+              <Card.Text>
+                Username: {userInfo.username} <br />
+                Почта: {userInfo.email} <br />
+                Phone: {userInfo.phone}
+              </Card.Text>
+            </Card.Body>
+          </Card>
+          <h2 className={styles.title}>Список постов</h2>
+          {userPosts &&
+            userPosts.map((item, i) => {
+              return (
+                <Post
+                  key={i}
+                  title={item.title}
+                  description={item.body}
+                  postId={currentPostId}
+                />
+              );
+            })}
+          <Link
+            to="/"
+            className="button button--outline button--add go-back-btn"
+          >
+            <Button>Вернуться назад</Button>
+          </Link>
+        </>
+      )}
     </div>
   );
 };

@@ -11,62 +11,82 @@ import { selectPostData } from "../app/slices/post/selectors";
 import { useSelector } from "react-redux";
 import { Col, Container, Row } from "react-bootstrap";
 import { Pagination } from "../components/Pagination";
-import Header from "../components/Header";
+import Loaded from "../components/Loader/Loader";
+import { Post as PostType } from "../app/slices/post/types";
 
 const PAGE_SIZE = 10;
 
-const Main = () => {
+interface MainProps {
+  processedPosts: PostType[];
+}
+
+const Main: React.FC<MainProps> = (props) => {
+  const { processedPosts } = props;
   const dispatch = useAppDispatch();
-  const { posts, status, currentPage } = useSelector(selectPostData);
+  const { status, currentPage } = useSelector(selectPostData);
+  const [customStatus, setCustomStatus] = useState<boolean>(false);
   const [totalPages, setTotalPages] = useState(0);
   const startIndex = (currentPage - 1) * 10;
   const endIndex = currentPage * 10;
 
-  const onChangePage = useCallback((page: number) => {
-    dispatch(setCurrentPage(page));
-    setComments([]);
-    window.scrollTo(0, 0);
-  }, []);
+  const fakeLoading = () => {
+    setCustomStatus(true);
+    const timeout = setTimeout(() => {
+      setCustomStatus(false);
+    }, 500);
 
-  const getPosts = async () => {
-    dispatch(fetchPosts());
-
-    window.scrollTo(0, 0);
+    return () => clearTimeout(timeout);
   };
 
-  useEffect(() => {
-    getPosts();
+  const onChangePage = useCallback((page: number) => {
+    try {
+      fakeLoading();
+      dispatch(setCurrentPage(page));
+      setComments([]);
+      window.scrollTo(0, 0);
+    } catch (err) {
+      alert("Произошла ошибка при пагинации");
+    }
   }, []);
 
   useEffect(() => {
-    const paginatedPosts = _.chunk(posts, PAGE_SIZE);
-    setTotalPages(paginatedPosts.length);
-  }, [posts]);
+    try {
+      const paginatedPosts = _.chunk(processedPosts, PAGE_SIZE);
+      setTotalPages(paginatedPosts.length);
+    } catch (err) {
+      alert("Произошла ошибка при пагинации");
+    }
+  }, [processedPosts]);
   return (
     <section>
-      <Header />
-      <Container>
-        <Row xs={1} md={2} className="g-4">
-          {posts.slice(startIndex, endIndex).map((post, i) => {
-            return (
-              <Col key={i} md={6}>
-                <Post
-                  title={post.title}
-                  description={post.body}
-                  postId={post.id}
-                />
-              </Col>
-            );
-          })}
-        </Row>
-      </Container>
-      <div className="d-flex flex-column align-items-center mt-4">
-        <Pagination
-          totalPages={totalPages}
-          currentPage={currentPage}
-          onChangePage={onChangePage}
-        />
-      </div>
+      {customStatus === true ? (
+        <Loaded />
+      ) : (
+        <>
+          <Container>
+            <Row xs={1} md={2} className="g-4">
+              {processedPosts.slice(startIndex, endIndex).map((post, i) => {
+                return (
+                  <Col key={i} md={6}>
+                    <Post
+                      title={post.title}
+                      description={post.body}
+                      postId={post.id}
+                    />
+                  </Col>
+                );
+              })}
+            </Row>
+          </Container>
+          <div className="d-flex flex-column align-items-center mt-4">
+            <Pagination
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onChangePage={onChangePage}
+            />
+          </div>
+        </>
+      )}
     </section>
   );
 };
