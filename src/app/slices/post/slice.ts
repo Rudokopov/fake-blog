@@ -1,11 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  Post,
-  Status,
-  PostSliceState,
-  Comment,
-  fetchCommentsArgs,
-} from "./types";
+import { Post, Status, PostSliceState, Comment } from "./types";
 
 import axios from "axios";
 
@@ -26,12 +20,11 @@ export const fetchPosts = createAsyncThunk<Post[]>(
   }
 );
 
-export const fetchComments = createAsyncThunk<Comment[], fetchCommentsArgs>(
+export const fetchComments = createAsyncThunk<Comment[], number>(
   "posts/fetchCommentsData",
-  async (params) => {
-    const { currentPost } = params;
+  async (postId: number) => {
     const { data } = await axios.get<Comment[]>(
-      `https://jsonplaceholder.typicode.com/posts/${currentPost}/comments`
+      `https://jsonplaceholder.typicode.com/posts/${postId}/comments`
     );
     return data;
   }

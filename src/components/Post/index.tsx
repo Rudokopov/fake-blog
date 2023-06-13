@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./post.module.scss";
 import { Button, Card } from "react-bootstrap";
 import { fetchComments } from "../../app/slices/post/slice";
 import { useAppDispatch } from "../../app/store";
-import { useSelector } from "react-redux";
-import { selectPostData } from "../../app/slices/post/selectors";
+import { Comment } from "../../app/slices/post/types";
 
 type PostProps = {
   postId: number;
@@ -16,10 +15,20 @@ type PostProps = {
 
 const Post: React.FC<PostProps> = (props) => {
   const dispatch = useAppDispatch();
+  const [currentsComments, setCurrentsComments] = useState<Comment[]>([]);
+  const [isShowComments, setShowComments] = useState(false);
   const { image, title, description, commentsCount, postId } = props;
 
-  const getComments = async (currentPost: number) => {
-    dispatch(fetchComments({ currentPost }));
+  const showComments = async () => {
+    try {
+      const res = await dispatch(fetchComments(postId));
+      const comments = res.payload;
+      if (comments) {
+        setCurrentsComments(comments as Comment[]);
+      }
+    } catch (err) {
+      alert("При запросе комментариев произошла ошибка");
+    }
   };
 
   return (
@@ -39,13 +48,24 @@ const Post: React.FC<PostProps> = (props) => {
         </div>
         <Card.Footer className="mt-auto">
           <Button
-            onClick={() => {
-              getComments(postId);
+            onClick={async () => {
+              await showComments();
+              console.log(currentsComments);
+              setShowComments(true);
             }}
           >
             <small className="text-muted">{commentsCount} комментария</small>
           </Button>
         </Card.Footer>
+        {isShowComments &&
+          currentsComments.map((item: Comment, i: number) => {
+            return (
+              <div key={i}>
+                <h4>{item.email}</h4>
+                <p>{item.body}</p>
+              </div>
+            );
+          })}
       </Card.Body>
     </Card>
   );

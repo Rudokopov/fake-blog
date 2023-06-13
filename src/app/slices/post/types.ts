@@ -20,11 +20,7 @@ export enum Status {
 
 export interface PostSliceState {
   posts: Post[];
-  comments: Comment[];
+  comments: Comment[] | unknown[];
   status: Status.LOADING | Status.SUCCESS | Status.ERROR;
   currentPage: number;
-}
-
-export interface fetchCommentsArgs {
-  currentPost: number;
 }
