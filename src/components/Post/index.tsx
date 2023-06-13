@@ -4,23 +4,26 @@ import { Button, Card } from "react-bootstrap";
 import { fetchComments } from "../../app/slices/post/slice";
 import { useAppDispatch } from "../../app/store";
 import { Comment } from "../../app/slices/post/types";
+import { postImage } from "../../utils/consts";
 
 type PostProps = {
   postId: number;
-  image: string;
   title: string;
   description: string;
-  commentsCount: number;
 };
 
 const Post: React.FC<PostProps> = (props) => {
   const dispatch = useAppDispatch();
   const [currentsComments, setCurrentsComments] = useState<Comment[]>([]);
   const [isShowComments, setShowComments] = useState(false);
-  const { image, title, description, commentsCount, postId } = props;
+  const { title, description, postId } = props;
 
-  const showComments = async () => {
+  const handleShowComments = async () => {
     try {
+      if (currentsComments.length !== 0) {
+        setCurrentsComments([]);
+        return;
+      }
       const res = await dispatch(fetchComments(postId));
       const comments = res.payload;
       if (comments) {
@@ -33,7 +36,7 @@ const Post: React.FC<PostProps> = (props) => {
 
   return (
     <Card className="h-100 d-flex flex-column">
-      <Card.Img className={styles.image} variant="top" src={image} />
+      <Card.Img className={styles.image} variant="top" src={postImage} />
       <Card.Body className="d-flex flex-column">
         <Card.Title className={styles.title}>{title}</Card.Title>
         <Card.Text className={styles.paragraph}>{description}</Card.Text>
@@ -49,12 +52,12 @@ const Post: React.FC<PostProps> = (props) => {
         <Card.Footer className="mt-auto">
           <Button
             onClick={async () => {
-              await showComments();
+              await handleShowComments();
               console.log(currentsComments);
               setShowComments(true);
             }}
           >
-            <small className="text-muted">{commentsCount} комментария</small>
+            <small className="text-muted">Комментари</small>
           </Button>
         </Card.Footer>
         {isShowComments &&
