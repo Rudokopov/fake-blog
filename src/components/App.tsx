@@ -11,6 +11,7 @@ import { useAppDispatch } from "../app/store";
 import { fetchPosts } from "../app/slices/post/slice";
 import About from "../pages/About";
 import GiftBox from "./GiftBox/GiftBox";
+import Loaded from "./Loader/Loader";
 
 const App: React.FC = () => {
   const { posts } = useSelector(selectPostData);
@@ -40,7 +41,10 @@ const App: React.FC = () => {
     <>
       <Header processedPosts={posts} />
       <Routes>
-        <Route path="/" element={<Main processedPosts={posts} />} />
+        <Route
+          path="/"
+          element={customStatus ? <Loaded /> : <Main processedPosts={posts} />}
+        />
         <Route path="/users/:id" element={<AboutUser />} />
         <Route path="/wtf" element={<GiftBox />} />
         <Route path="/about" element={<About />} />
