@@ -27,6 +27,20 @@ const Header: React.FC<HeaderProps> = (props) => {
     dispatch(fetchPosts());
   };
 
+  const sortPostsAlphabetically = (posts: Post[]): void => {
+    const sortedPosts = [...processedPosts]; // Создаем копию массива постов
+    sortedPosts.sort((a, b) =>
+      a.title.localeCompare(b.title, "en", { sensitivity: "base" })
+    );
+
+    dispatch(setPosts(sortedPosts));
+  };
+
+  const handleSortClick = (evt: React.MouseEvent<HTMLButtonElement>) => {
+    evt.preventDefault();
+    sortPostsAlphabetically(processedPosts);
+  };
+
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const filteredPosts = processedPosts.filter((post) =>
@@ -34,7 +48,6 @@ const Header: React.FC<HeaderProps> = (props) => {
     );
 
     dispatch(setPosts(filteredPosts));
-    console.log(processedPosts);
   };
 
   return (
@@ -85,6 +98,7 @@ const Header: React.FC<HeaderProps> = (props) => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
+      <Button onClick={handleSortClick}>Сортировать по алфавиту</Button>
     </section>
   );
 };
