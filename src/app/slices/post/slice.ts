@@ -10,6 +10,7 @@ const initialState: PostSliceState = {
   comments: [],
   status: Status.LOADING,
   currentPage: 1,
+  error: null,
 };
 
 export const fetchPosts = createAsyncThunk<Post[]>(
@@ -45,11 +46,13 @@ const postSlices = createSlice({
     setComments(state, action: PayloadAction<Comment[]>) {
       state.comments = action.payload;
     },
+    setError(state, action: PayloadAction<string | null>) {
+      state.error = action.payload;
+    },
   },
 
   extraReducers: (builder) => {
     builder.addCase(fetchPosts.pending, (state) => {
-      state.posts = [];
       state.status = Status.LOADING;
     });
     builder.addCase(fetchPosts.fulfilled, (state, action) => {
@@ -57,14 +60,10 @@ const postSlices = createSlice({
       state.status = Status.SUCCESS;
     });
     builder.addCase(fetchPosts.rejected, (state) => {
-      state.posts = [];
       state.status = Status.ERROR;
+      // state.error = "Failed to fetch posts";
     });
-
-    // Reducer для Комментов
-
     builder.addCase(fetchComments.pending, (state) => {
-      state.comments = [];
       state.status = Status.LOADING;
     });
     builder.addCase(fetchComments.fulfilled, (state, action) => {
@@ -72,11 +71,12 @@ const postSlices = createSlice({
       state.status = Status.SUCCESS;
     });
     builder.addCase(fetchComments.rejected, (state) => {
-      state.comments = [];
       state.status = Status.ERROR;
+      state.error = "Failed to fetch comments";
     });
   },
 });
 
-export const { setPosts, setCurrentPage, setComments } = postSlices.actions;
+export const { setPosts, setCurrentPage, setComments, setError } =
+  postSlices.actions;
 export default postSlices.reducer;

@@ -23,4 +23,5 @@ export interface PostSliceState {
   comments: Comment[] | unknown[];
   status: Status.LOADING | Status.SUCCESS | Status.ERROR;
   currentPage: number;
+  error: string | null;
 }
