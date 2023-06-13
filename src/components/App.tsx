@@ -9,6 +9,8 @@ import { useSelector } from "react-redux";
 import { selectPostData } from "../app/slices/post/selectors";
 import { useAppDispatch } from "../app/store";
 import { fetchPosts } from "../app/slices/post/slice";
+import About from "../pages/About";
+import GiftBox from "./GiftBox/GiftBox";
 
 const App: React.FC = () => {
   const { posts } = useSelector(selectPostData);
@@ -39,7 +41,9 @@ const App: React.FC = () => {
       <Header processedPosts={posts} />
       <Routes>
         <Route path="/" element={<Main processedPosts={posts} />} />
-        <Route path="users/:id" element={<AboutUser />} />
+        <Route path="/users/:id" element={<AboutUser />} />
+        <Route path="/wtf" element={<GiftBox />} />
+        <Route path="/about" element={<About />} />
       </Routes>
     </>
   );

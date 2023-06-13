@@ -6,6 +6,7 @@ import styles from "./header.module.scss";
 import { Post } from "../../app/slices/post/types";
 import { fetchPosts, setPosts } from "../../app/slices/post/slice";
 import { useAppDispatch } from "../../app/store";
+import { useLocation } from "react-router-dom";
 
 interface HeaderProps {
   processedPosts: Post[];
@@ -13,6 +14,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = (props) => {
   const dispatch = useAppDispatch();
+  const location = useLocation();
   const { processedPosts } = props;
   const [value, setValue] = useState<string>("");
   const [searchResults, setSearchResults] = useState<Post[]>([]);
@@ -28,7 +30,7 @@ const Header: React.FC<HeaderProps> = (props) => {
   };
 
   const sortPostsAlphabetically = (posts: Post[]): void => {
-    const sortedPosts = [...processedPosts]; // Создаем копию массива постов
+    const sortedPosts = [...processedPosts];
     sortedPosts.sort((a, b) =>
       a.title.localeCompare(b.title, "en", { sensitivity: "base" })
     );
@@ -63,26 +65,29 @@ const Header: React.FC<HeaderProps> = (props) => {
               navbarScroll
             >
               <Nav.Link href="/">Home</Nav.Link>
-              <Nav.Link href="/about">About</Nav.Link>
+              <Nav.Link href="/wtf">About</Nav.Link>
             </Nav>
-            <Form onSubmit={onSubmit} className="d-flex mb-5">
-              <div className="custom-input-container">
-                <Form.Control
-                  type="text"
-                  placeholder="Enter a value"
-                  value={value}
-                  onChange={onChangeInput}
-                />
-              </div>
-              {value && (
-                <Button className="clear-icon" onClick={onClearInput}>
-                  X
+            {location.pathname !== "/about" && (
+              <Form onSubmit={onSubmit} className="d-flex mb-5">
+                <div className="custom-input-container">
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter a value"
+                    value={value}
+                    onChange={onChangeInput}
+                  />
+                </div>
+                {value && (
+                  <Button className="clear-icon" onClick={onClearInput}>
+                    X
+                  </Button>
+                )}
+                <Button type="submit" variant="outline-success">
+                  Search
                 </Button>
-              )}
-              <Button type="submit" variant="outline-success">
-                Search
-              </Button>
-            </Form>
+              </Form>
+            )}
+
             <div className="d-flex align-items-center d-lg-none">
               <img
                 src={myAvatar}
@@ -98,7 +103,9 @@ const Header: React.FC<HeaderProps> = (props) => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      <Button onClick={handleSortClick}>Сортировать по алфавиту</Button>
+      {location.pathname !== "/about" && (
+        <Button onClick={handleSortClick}>Сортировать по алфавиту</Button>
+      )}
     </section>
   );
 };

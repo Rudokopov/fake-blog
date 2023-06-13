@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { put, takeLatest, all } from "redux-saga/effects";
 import { Post, Status, PostSliceState, Comment } from "./types";
+import { postSagas } from "./postSaga";
 
 import axios from "axios";
 

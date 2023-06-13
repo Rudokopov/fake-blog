@@ -1,0 +1,66 @@
+@keyframes legendaryTitle {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes button-scale {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.192);
+  backdrop-filter: blur(10px);
+  background-image: url("https://99px.ru/sstorage/86/2016/06/image_861406162009197217279.gif");
+  border-radius: 15px;
+  border: 1px solid rgba(43, 43, 43, 0.568);
+  height: 100vh;
+  z-index: 7;
+}
+
+.title {
+  margin-top: 420px;
+  font-size: clamp(1rem, 1rem + 5vw, 56px);
+  background: linear-gradient(
+    90deg,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: legendaryTitle 5s ease-in-out infinite;
+}
+
+.button {
+  animation: button-scale 1s ease-in-out infinite;
+}
+
+.link {
+  all: unset;
+  color: #fff;
+}
